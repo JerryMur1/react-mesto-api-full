@@ -1,44 +1,34 @@
-const UserModel = require('../models/user');
+// eslint-disable-next-line import/no-unresolved
+const bcrypt = require('bcryptjs');
 
-const errorHandler = (err, res) => {
-  if (err.name === 'ValidationError' || err.kind === 'string') {
-    res.status(400).send({ message: 'Валидация не прошла' });
-  } else if (err.kind === 'ObjectId') {
-    res.status(400).send({ message: 'Ошибка' });
-  } else if (err.message === 'Такого пользователя в базе нет') {
-    res.status(404).send({ message: err.message });
-  } else {
-    res.status(500).send({ message: 'Произошла ошибка' });
-  }
-};
+const UserModel = require('../models/user');
+const NotFoundError = require('../errors/error.js')
+const SALT_ROUNDS = 10;
+// const errorHandler = (err, res) => {
+//   if (err.name === 'ValidationError' || err.kind === 'string') {
+//     res.status(400).send({ message: 'Валидация не прошла' });
+//   } else if (err.kind === 'ObjectId') {
+//     res.status(400).send({ message: 'Ошибка' });
+//   } else if (err.message === 'Такого пользователя в базе нет') {
+//     res.status(404).send({ message: err.message });
+//   } else if (err.message === 'Такого пользователя в базе нет') {
+//     res.status(401).send({ message: err.message });
+//   } else {
+//     res.status(500).send({ message: 'Произошла ошибка' });
+//   }
+// };
 
 const getUsers = (req, res) => UserModel.find({})
   .then((users) => res.status(200).send(users))
-  .catch((err) => errorHandler(err, res));
+  .catch(next);
 
 const getProfile = (req, res) => UserModel.findOne({ _id: req.params._id })
   .orFail(() => {
-    throw new Error('Такого пользователя в базе нет');
+    throw new NotFoundError('Такого пользователя в базе нет');
   })
   .then((user) => res.status(200).send(user))
-  .catch((err) => errorHandler(err, res));
+  .catch(next);
 
-const postProfile = (req, res) => {
-  const { name, about, avatar } = req.body;
-  UserModel.create({ name, about, avatar })
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    // eslint-disable-next-line consistent-return
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Валидация не прошла' });
-      }
-      // eslint-disable-next-line no-console
-      console.log(err);
-      res.status(500).send({ message: 'Запрос не найден' });
-    });
-};
 
 const patchProfile = (req, res) => {
   const { name, about } = req.body;
@@ -47,15 +37,13 @@ const patchProfile = (req, res) => {
     runValidators: true,
   })
     .orFail(() => {
-      throw new Error('Такого пользователя в базе нет');
+      throw new NotFoundError('Такого пользователя в базе нет');
     })
     // eslint-disable-next-line consistent-return
     .then((user) => {
       res.status(200).send(user);
     })
-    .catch((err) => {
-      errorHandler(err, res);
-    });
+    .catch(next);
 };
 
 const updateAvatar = (req, res) => {
@@ -65,17 +53,44 @@ const updateAvatar = (req, res) => {
     runValidators: true,
   })
     .orFail(() => {
-      throw new Error('Такого пользователя в базе нет');
+      throw new NotFoundError('Такого пользователя в базе нет');
     })
     // eslint-disable-next-line consistent-return
     .then((user) => {
       res.status(200).send(user);
     })
-    .catch((err) => {
-      errorHandler(err, res);
-    });
+    .catch(next);
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return UserModel.findUserByCredentials(email, password)
+    .then((user) => {
+      // eslint-disable-next-line no-undef
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+
+      // вернём токен
+      res.send({ token });
+    })
+    .catch(next);
+};
+
+// eslint-disable-next-line consistent-return
+const createUser = (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(404).send({ message: 'Нет емейла или пароля' });
+  }
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => UserModel.create({ email, password: hash }))
+    .then(() => {
+      res.status(200).send({ message: 'Пользователь создан' });
+    })
+    .catch(next);
 };
 
 module.exports = {
-  getUsers, getProfile, postProfile, patchProfile, updateAvatar,
+  getUsers, getProfile, patchProfile, updateAvatar, login, createUser,
 };
