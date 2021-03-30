@@ -1,0 +1,10 @@
+.header__signout{
+    color: white;
+    object-fit: none;
+    margin-bottom: 22px;
+    box-sizing: border-box;
+    border: none;
+    background-color: black;
+    cursor: pointer;
+    text-decoration: none;
+}
