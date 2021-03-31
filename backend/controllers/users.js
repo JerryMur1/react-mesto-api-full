@@ -21,7 +21,14 @@ const SALT_ROUNDS = 10;
 const getUsers = (req, res) => UserModel.find({})
   .then((users) => res.status(200).send(users))
   .catch(next);
-
+const getUser = (req, res) => UserModel.findById(auth)
+.then((user)=>{
+  if(!user) {
+    throw new NotFoundError('Такого пользователя в базе нет');
+  }
+  return res.status(200).send(user);
+})
+.catch(next)
 const getProfile = (req, res) => UserModel.findOne({ _id: req.params._id })
   .orFail(() => {
     throw new NotFoundError('Такого пользователя в базе нет');
@@ -92,5 +99,5 @@ const createUser = (req, res) => {
 };
 
 module.exports = {
-  getUsers, getProfile, patchProfile, updateAvatar, login, createUser,
+  getUsers, getProfile, patchProfile, updateAvatar, login, createUser, getUser
 };

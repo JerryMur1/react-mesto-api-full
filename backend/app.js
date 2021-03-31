@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
-const { errors } = require('celebrate');
+require('dotenv').config(); 
+const { errors } = require('../frontend/node_modules/celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;

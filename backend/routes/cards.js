@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {
   getCards, postCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
-
+const { celebrate, Joi } = require('../../frontend/node_modules/celebrate');
 router.get('/cards',
 celebrate({
   body: Joi.object().keys({
