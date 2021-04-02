@@ -1,16 +1,5 @@
 const CardModel = require('../models/card');
 const NotFoundError = require('../errors/error.js')
-// const errorHandler = (err, res) => {
-//   if (err.name === 'ValidationError' || err.kind === 'string') {
-//     res.status(400).send({ message: 'Валидация не прошла' });
-//   } else if (err.kind === 'ObjectId') {
-//     res.status(400).send({ message: 'Нет такой карточки' });
-//   } else if (err.message === 'Такой карточки в базе нет') {
-//     res.status(404).send({ message: err.message });
-//   } else {
-//     res.status(500).send({ message: 'Произошла ошибка' });
-//   }
-// };
 
 const getCards = (req, res) => CardModel.find({})
   .then((cards) => res.status(200).send(cards))
@@ -25,7 +14,12 @@ const postCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  CardModel.findByIdAndRemove(cardId)
+  CardModel.findById(cardId)
+  .then(()=>{
+    if(owner === cardId){
+      CardModel.findByIdAndRemove(cardId)
+    }
+  })
     .orFail(() => { throw new NotFoundError('Такой карточки в базе нет'); })
     .then((card) => res.status(200).send(card))
     .catch(next);

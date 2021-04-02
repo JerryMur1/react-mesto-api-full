@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {
   getUsers, getProfile, patchProfile, updateAvatar, login, createUser, getUser
 } = require('../controllers/users');
-const { celebrate, Joi } = require('../../frontend/node_modules/celebrate');
+const { celebrate, Joi } = require('celebrate');
 
 router.get('/users', getUsers);
 
@@ -41,7 +41,7 @@ router.patch('/users/me', celebrate({
 
 router.patch('/users/me/avatar',celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().required().pattern(new RegExp(/https?:\/\/w*[\da-zA-Z\W]+#?/g)),
   }),
   headers: Joi.object().keys({
     
