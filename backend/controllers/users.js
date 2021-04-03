@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
-const bcrypt = require('bcryptjs');
 
+const bcrypt = require('bcryptjs');
+const auth = require('../middlewares/auth');
 const UserModel = require('../models/user');
 const NotFoundError = require('../errors/error.js')
 const SALT_ROUNDS = 10;
@@ -29,7 +29,7 @@ const getUser = (req, res) => UserModel.findById(auth)
   return res.status(200).send(user);
 })
 .catch(next)
-const getProfile = (req, res) => UserModel.findOne({ _id: req.params._id })
+const getProfile = (req, res, next) => UserModel.findOne({ _id: req.params._id })
   .orFail(() => {
     throw new NotFoundError('Такого пользователя в базе нет');
   })
@@ -37,7 +37,7 @@ const getProfile = (req, res) => UserModel.findOne({ _id: req.params._id })
   .catch(next);
 
 
-const patchProfile = (req, res) => {
+const patchProfile = (req, res, next) => {
   const { name, about } = req.body;
   UserModel.findByIdAndUpdate(req.user._id, { name, about }, {
     new: true,
@@ -53,7 +53,7 @@ const patchProfile = (req, res) => {
     .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   UserModel.findByIdAndUpdate(req.user._id, { avatar }, {
     new: true,
@@ -69,7 +69,7 @@ const updateAvatar = (req, res) => {
     .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return UserModel.findUserByCredentials(email, password)
@@ -84,7 +84,7 @@ const login = (req, res) => {
 };
 
 // eslint-disable-next-line consistent-return
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {

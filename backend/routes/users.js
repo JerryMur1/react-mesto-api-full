@@ -6,7 +6,11 @@ const { celebrate, Joi } = require('celebrate');
 
 router.get('/users', getUsers);
 
-router.get('/users/:_id', getProfile);
+router.get('/users/:_id', celebrate({
+  params: Joi.object().keys({
+    _id: Joi.string().required().length(24).hex(),
+  })
+}), getProfile);
 
 router.get('/users/me', celebrate({
   body: Joi.object().keys({
@@ -41,7 +45,7 @@ router.patch('/users/me', celebrate({
 
 router.patch('/users/me/avatar',celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(new RegExp(/https?:\/\/w*[\da-zA-Z\W]+#?/g)),
+    avatar: Joi.string().required().pattern(new RegExp(/https?:\/\/w*[\da-zA-Z\W]+#?/)),
   }),
   headers: Joi.object().keys({
     

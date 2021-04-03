@@ -4,7 +4,7 @@ const NotFoundError = require('../errors/error.js')
 const getCards = (req, res) => CardModel.find({})
   .then((cards) => res.status(200).send(cards))
   .catch(() => res.status(500).send({ message: 'Нет карточки с таким id' }));
-const postCard = (req, res) => {
+const postCard = (req, res, next) => {
   const { name, link } = req.body;
   CardModel.create({ name, link, owner: req.user._id })
     // eslint-disable-next-line consistent-return
@@ -12,7 +12,7 @@ const postCard = (req, res) => {
     .catch(next);
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   CardModel.findById(cardId)
   .then(()=>{
@@ -24,7 +24,7 @@ const deleteCard = (req, res) => {
     .then((card) => res.status(200).send(card))
     .catch(next);
 };
-const likeCard = (req, res) => CardModel.findByIdAndUpdate(
+const likeCard = (req, res, next) => CardModel.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } },
   { new: true },
@@ -33,7 +33,7 @@ const likeCard = (req, res) => CardModel.findByIdAndUpdate(
   // eslint-disable-next-line consistent-return
   .catch(next);
 
-const dislikeCard = (req, res) => CardModel.findByIdAndUpdate(
+const dislikeCard = (req, res, next) => CardModel.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } },
   { new: true },
