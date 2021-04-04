@@ -1,8 +1,9 @@
-
+/* eslint-disable no-undef */
 const bcrypt = require('bcryptjs');
 const auth = require('../middlewares/auth');
 const UserModel = require('../models/user');
-const NotFoundError = require('../errors/error.js')
+const NotFoundError = require('../errors/error.js');
+
 const SALT_ROUNDS = 10;
 // const errorHandler = (err, res) => {
 //   if (err.name === 'ValidationError' || err.kind === 'string') {
@@ -18,24 +19,23 @@ const SALT_ROUNDS = 10;
 //   }
 // };
 
-const getUsers = (req, res) => UserModel.find({})
+const getUsers = (req, res, next) => UserModel.find({})
   .then((users) => res.status(200).send(users))
   .catch(next);
-const getUser = (req, res) => UserModel.findById(auth)
-.then((user)=>{
-  if(!user) {
-    throw new NotFoundError('Такого пользователя в базе нет');
-  }
-  return res.status(200).send(user);
-})
-.catch(next)
+const getUser = (req, res, next) => UserModel.findById(auth)
+  .then((user) => {
+    if (!user) {
+      throw new NotFoundError('Такого пользователя в базе нет');
+    }
+    return res.status(200).send(user);
+  })
+  .catch(next);
 const getProfile = (req, res, next) => UserModel.findOne({ _id: req.params._id })
   .orFail(() => {
     throw new NotFoundError('Такого пользователя в базе нет');
   })
   .then((user) => res.status(200).send(user))
   .catch(next);
-
 
 const patchProfile = (req, res, next) => {
   const { name, about } = req.body;
@@ -71,13 +71,21 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  return UserModel.findUserByCredentials(email, password)
+  UserModel.findOne({ email }).select('+password')
     .then((user) => {
-      // eslint-disable-next-line no-undef
+      if (!user) {
+        throw new NotFoundError();
+      }
+      bcrypt.compare(password, user.password)
+
+        .then(matched);
+      if (!matched) {
+        throw new NotFoundError();
+      }
+    })
+    .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
 
-      // вернём токен
       res.send({ token });
     })
     .catch(next);
@@ -99,5 +107,5 @@ const createUser = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers, getProfile, patchProfile, updateAvatar, login, createUser, getUser
+  getUsers, getProfile, patchProfile, updateAvatar, login, createUser, getUser,
 };

@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('dotenv').config(); 
-const { errors } = require('celebrate')
+require('dotenv').config();
+const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -29,20 +31,20 @@ app.use(auth);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 app.use('*', (req, res) => {
-  throw new NotFoundError;
+  throw new NotFoundError();
 });
 app.use(errorLogger);
-app.use(errors())
-app.use((err, req, res, next) =>{
-  if(err.name === 'ValidationError' || err.name === 'CastError') {
+app.use(errors());
+app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
     err.statusCode = 400;
-    err.message = 'Ошибка валидации'
-  } else if(err.code === 11000) {
+    err.message = 'Ошибка валидации';
+  } else if (err.code === 11000) {
     err.statusCode = 409;
-    err.message = 'Пользователь с таким емейлом уже существует'
+    err.message = 'Пользователь с таким емейлом уже существует';
   }
-  const { statusCode = 500, message } = err
-  res.status(statusCode).send({message: statusCode = 500 ? 'На сервере произошла ошибка' : message})
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
 });
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
