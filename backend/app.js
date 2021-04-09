@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const { errors } = require('celebrate');
+const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -15,7 +16,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 const auth = require('./middlewares/auth');
 
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'https://borman.nomoredomains.club/',
+  ],
+  credentials: true,
+};
+
 const app = express();
+app.use('*', cors(options));
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
 const signIn = require('./routes/users.js');

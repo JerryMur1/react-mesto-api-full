@@ -7,21 +7,16 @@ const {
 router.get('/cards',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
+      name: Joi.string().required().min(2),
       link: Joi.string().required().min(2).pattern(new RegExp(/https?:\/\/w*[\da-zA-Z\W]+#?/)),
-    }),
-    headers: Joi.object().keys({
-
     }),
   }), getCards);
 router.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
+    name: Joi.string().required().min(2),
     link: Joi.string().required().min(2).pattern(new RegExp(/https?:\/\/w*[\da-zA-Z\W]+#?/)),
   }),
-  headers: Joi.object().keys({
 
-  }),
 }), postCard);
 router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({

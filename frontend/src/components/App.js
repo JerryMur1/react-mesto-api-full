@@ -15,6 +15,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import * as mestoAuth from "../mestoAuth"
 import InfoToolTip from "./InfoToolTip";
 
+
 function App() {
  
   const [cards, setCards] = React.useState([]);
@@ -50,28 +51,41 @@ function App() {
 
  
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
     api.getUserId().then((res) => {
+     
       setCurrentUser({
         name: res.name,
         about: res.about,
         avatar: res.avatar,
         _id: res._id
       })
+      
     }).catch((res)=>{
       console.log(res)
+      
     });
-  }, []);
+    
+  }, [loggedIn]);
 
 
 
 
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
     api.getInitialCards().then((item) => {
-      setCards(item);
+      setCards(item.reverse());
+      
+      console.log(item)
+      
     }).catch((res)=>{
       console.log(res)
     });
-  }, []);
+  }, [loggedIn]);
   
 function handleAddPlaceSubmit({name, link}){
   api.addCards({name, link}).then(newCard => {
@@ -94,11 +108,11 @@ function handleDeleteCard({cardId}) {
 
 
   function handleCardLike({likes, cardId}) {
-    const isLiked = likes.some(i => {return i._id === currentUser._id});
+    const isLiked = likes.some(i => i === currentUser._id);
   
     api.likeCard(cardId, !isLiked).then((newCard) => {
       console.log(isLiked)
-      const newCards = cards.map((c) => {return c._id === cardId ? newCard : c});
+      const newCards = cards.map(c => c._id === cardId ? newCard : c);
       setCards(newCards);
     });
 }
@@ -134,23 +148,27 @@ console.log(cards)
     selectedCard(null);
   }
 const tokenCheck = () =>{
-  const jwt = localStorage.getItem('token')
-  if (jwt) {
+  const token = localStorage.getItem('token')
+  if (token) {
+   
+    mestoAuth.getContent('token')
     
-    mestoAuth.getContent(jwt)
-    .then((res) =>{
+    .then((res) => {
       console.log(res)
       if(res){
         setUserData({
           ...userData,
-          email: res.data.email,
+          email:res.email,
         })
+        console.log(res);
         setLoggedIn(true)
       }
+      
     })
     .catch(e => console.error(e))
   }
   else {
+    
     setLoggedIn(false)
   }
   
@@ -162,7 +180,7 @@ React.useEffect(() =>{
   if(loggedIn){
     history.push('/')
   }
-}, [loggedIn])
+}, [history, loggedIn])
 
   const handleRegister = (email, password) => {
     
@@ -183,19 +201,21 @@ React.useEffect(() =>{
   const handleLogin = (email, password) =>{
     mestoAuth.authorize(email, password)
 .then((data) => {
- 
+ console.log(data)
   if(data.token){
     history.push('/')
   localStorage.setItem('token', data.token)
+  console.log(data)
   setLoggedIn(true)
   setUserData({
     ...userData,
-    email: data.user.email,
+    email: data.email,
   })
   }
   if(data.statusCode === 400){
     throw new Error('Что-то пошло не так')
   }
+  
 })
 .catch((e) => console.log(e));
   }

@@ -1,8 +1,7 @@
 /* eslint-disable no-useless-concat */
 export class Api {
-  constructor({ baseUrl, headers}) {
+  constructor({ baseUrl}) {
     this._baseUrl = baseUrl;
-    this._headers = headers;
     
 
   }
@@ -10,14 +9,16 @@ export class Api {
   getInitialCards() {
     return fetch(this._baseUrl + "cards", {
       method: "GET",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
     }).then(this._handleResOk);
   }
 
   addCards(data) {
     return fetch(this._baseUrl + "cards", {
       method: "POST",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
       body: JSON.stringify({
         name: data.name,
         link: data.link,
@@ -28,7 +29,8 @@ export class Api {
   addUserId(data) {
     return fetch(this._baseUrl + "users" + "/" + "me", {
       method: "PATCH",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
       body: JSON.stringify({
         name: data.name,
         about: data.about
@@ -39,14 +41,16 @@ export class Api {
   getUserId() {
     return fetch(this._baseUrl + "users" + "/" + "me", {
       method: "GET",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
     }).then(this._handleResOk);
   }
 
   addAvatarId(data) {
     return fetch(this._baseUrl + "users" + "/" + "me" + "/" + "avatar", {
       method: "PATCH",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
       body: JSON.stringify({
         avatar: data.avatar,
       }),
@@ -60,35 +64,59 @@ export class Api {
   deleteCard(_id) {
     return fetch(this._baseUrl + "cards/" + _id, {
       method: "DELETE",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
     }).then(this._handleResOk);
   }
 
   likeCard(_id, like) {
     // console.log(isLiked)
-    return fetch(`${this._baseUrl}cards/likes/${_id}`, {
+    return fetch(`${this._baseUrl}cards/${_id}/likes`, {
       method: like ? "PUT" : "DELETE",
-      headers: this._headers,
+      headers: this.headers(),
+      credentials: 'include',
       
     }).then(this._handleResOk);
     
   }
 
-
+signin(body) {
+  return fetch(`${this._baseUrl}signin`, {
+    method: 'POST',
+    headers: this.headers(),
+    credentials: 'include',
+    body: JSON.stringify(body)
+    
+  }).then(this._handleResOk);
+  
+}
+signup(body) {
+  return fetch(`${this._baseUrl}signup`, {
+    method: 'POST',
+    headers: this.headers(),
+    credentials: 'include',
+    body: JSON.stringify(body)
+    
+  }).then(this._handleResOk);
+  
+}
   _handleResOk(res) {
     if (res.ok) {
       return res.json();
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   }
+  headers(){
+    return  {
+      authorization: `Bearer ${localStorage.getItem('token')}`,
+      "Content-Type": "application/json",
+    }
+  }
 }
 
 const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-18/",
-  headers: {
-    authorization: "a40cc85c-64a0-4b1f-ad4a-926989d9eacf",
-    "Content-Type": "application/json",
-  },
+  baseUrl: "//api.borman.nomoredomains.club/",
+ 
 });
 
 export default api;

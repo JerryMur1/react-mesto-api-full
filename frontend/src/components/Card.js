@@ -16,14 +16,14 @@ function handleDeleteClick(){
   onCardDelete({owner, cardId})
 }
 
-const isOwn = owner._id === currentUser._id;
+const isOwn = owner === currentUser._id;
 
 // Создаём переменную, которую после зададим в `className` для кнопки удаления
 const cardDeleteButtonClassName = (
   `element__delete ${!isOwn ? 'button_visibility' : ''}`
 );
 
-const isLiked = likes.some(i => i._id === currentUser._id);
+const isLiked = likes.some(i => i === currentUser._id);
 
 const cardLikeButtonClassName = (
   `element__like ${isLiked ? 'element__like_active' : ''}`
