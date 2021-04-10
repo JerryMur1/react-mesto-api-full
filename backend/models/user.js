@@ -1,3 +1,4 @@
+const isEmail = require('validator/lib/isEmail');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -25,7 +26,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      // eslint-disable-next-line no-undef
       validator: (x) => isEmail(x),
       message: 'Неправильно введена почта',
     },

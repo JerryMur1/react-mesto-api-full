@@ -1,4 +1,7 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const handleAuthError = (res) => {
   res
@@ -8,6 +11,7 @@ const handleAuthError = (res) => {
 
 const extractBearerToken = (header) => header.replace('Bearer ', '');
 
+// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
@@ -19,7 +23,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret');
   } catch (err) {
     return handleAuthError(res);
   }

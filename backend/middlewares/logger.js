@@ -16,6 +16,7 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
+// eslint-disable-next-line no-undef
 module.exports = {
   requestLogger,
   errorLogger,
