@@ -21,14 +21,15 @@ const auth = require('./middlewares/auth');
 const options = {
   origin: [
     'http://localhost:3000',
-    'https://borman.nomoredomains.club/',
+    'https://borman.nomoredomains.club',
     'https://jerrymur1.github.io/react-mesto-api-full/',
   ],
   credentials: true,
 };
+app.use('*', cors(options));
+
 app.use(requestLogger);
 app.use(bodyParser.json());
-app.use(cors());
 
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
