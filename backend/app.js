@@ -8,6 +8,7 @@ const { errors } = require('celebrate');
 const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const app = express();
 const { PORT = 3001 } = process.env;
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -20,12 +21,13 @@ const options = {
   origin: [
     'http://localhost:3000',
     'https://borman.nomoredomains.club/',
+    'https://jerrymur1.github.io/react-mesto-api-full/',
   ],
   credentials: true,
 };
 
-const app = express();
 app.use('*', cors(options));
+
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
 const signIn = require('./routes/users.js');
