@@ -16,7 +16,7 @@ function handleDeleteClick(){
   onCardDelete({owner, cardId})
 }
 
-const isOwn = owner === currentUser._id;
+const isOwn = owner._id === currentUser._id;
 
 // Создаём переменную, которую после зададим в `className` для кнопки удаления
 const cardDeleteButtonClassName = (

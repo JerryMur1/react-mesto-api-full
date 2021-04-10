@@ -15,7 +15,6 @@ import ProtectedRoute from "./ProtectedRoute";
 import * as mestoAuth from "../mestoAuth"
 import InfoToolTip from "./InfoToolTip";
 
-
 function App() {
  
   const [cards, setCards] = React.useState([]);
@@ -51,11 +50,10 @@ function App() {
 
  
   React.useEffect(() => {
-    if (!loggedIn) {
-      return;
-    }
     api.getUserId().then((res) => {
-     
+      if (!loggedIn) {
+        return;
+      }
       setCurrentUser({
         name: res.name,
         about: res.about,
@@ -65,23 +63,19 @@ function App() {
       
     }).catch((res)=>{
       console.log(res)
-      
     });
-    
   }, [loggedIn]);
 
 
 
 
   React.useEffect(() => {
-    if (!loggedIn) {
-      return;
-    }
     api.getInitialCards().then((item) => {
-      setCards(item.reverse());
-      
+      if (!loggedIn) {
+        return;
+      }
+      setCards(item);
       console.log(item)
-      
     }).catch((res)=>{
       console.log(res)
     });
@@ -150,25 +144,21 @@ console.log(cards)
 const tokenCheck = () =>{
   const token = localStorage.getItem('token')
   if (token) {
-   
-    mestoAuth.getContent('token')
     
-    .then((res) => {
+    mestoAuth.getContent(token)
+    .then((res) =>{
       console.log(res)
       if(res){
         setUserData({
           ...userData,
-          email:res.email,
+          email: res.email,
         })
-        console.log(res);
         setLoggedIn(true)
       }
-      
     })
     .catch(e => console.error(e))
   }
   else {
-    
     setLoggedIn(false)
   }
   
@@ -215,7 +205,6 @@ React.useEffect(() =>{
   if(data.statusCode === 400){
     throw new Error('Что-то пошло не так')
   }
-  
 })
 .catch((e) => console.log(e));
   }
