@@ -50,19 +50,21 @@ function App() {
 
  
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
     api.getUserId().then((res) => {
-      if (!loggedIn) {
-        return;
-      }
+      
       setCurrentUser({
         name: res.name,
         about: res.about,
         avatar: res.avatar,
         _id: res._id
       })
-      
+     
     }).catch((res)=>{
       console.log(res)
+      
     });
   }, [loggedIn]);
 
@@ -70,12 +72,14 @@ function App() {
 
 
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
     api.getInitialCards().then((item) => {
-      if (!loggedIn) {
-        return;
-      }
+      
       setCards(item.reverse());
       console.log(item)
+     
     }).catch((res)=>{
       console.log(res)
     });
@@ -145,8 +149,10 @@ const tokenCheck = () =>{
   const token = localStorage.getItem('token')
   if (token) {
     
+    
     mestoAuth.getContent(token)
     .then((res) =>{
+      
       console.log(res)
       if(res){
         setUserData({
@@ -164,9 +170,11 @@ const tokenCheck = () =>{
   
 }
 React.useEffect(() =>{
+  
   tokenCheck();
 }, [])
 React.useEffect(() =>{
+  
   if(loggedIn){
     history.push('/')
   }

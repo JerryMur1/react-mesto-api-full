@@ -26,7 +26,8 @@ const options = {
   ],
   credentials: true,
 };
-app.use(cors());
+
+app.use('*', cors(options));
 
 app.use(requestLogger);
 app.use(bodyParser.json());

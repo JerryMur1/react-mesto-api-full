@@ -1,5 +1,5 @@
 
-const BASE_URL = ''
+const BASE_URL = 'api.borman.nomoredomains.clubs'
 
 export const register = (email, password) =>{
     return fetch(`${BASE_URL}/signup`, {
