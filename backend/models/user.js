@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const isEmail = require('validator/lib/isEmail');
 const mongoose = require('mongoose');
 
@@ -33,6 +34,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
 });
 

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const UserModel = require('../models/user');
 const NotFoundError = require('../errors/error.js');
 
@@ -60,19 +61,19 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
+  const { NODE_ENV, JWT_SECRET } = process.env;
   UserModel.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Такого пользователя в базе нет');
+        res.status(401).send('Такого пользователя в базе нет');
       }
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new NotFoundError('Такого пользователя в базе нет');
+            res.status(401).send('Такого пользователя в базе нет');
           }
 
-          const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', { expiresIn: '7d' });
           res.send({ token });
         });
     })

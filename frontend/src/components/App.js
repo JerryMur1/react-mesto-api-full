@@ -153,7 +153,6 @@ const tokenCheck = () =>{
     
     mestoAuth.getContent('token')
     .then((res) =>{
-      
       console.log(res)
       if(res){
         setUserData({
@@ -185,7 +184,6 @@ React.useEffect(() =>{
     
     mestoAuth.register(email, password)
     .then((res) =>{
-      console.log(res)
       if(res.statusCode !== 400){
         setStatus(true)
         history.push('/signin')
