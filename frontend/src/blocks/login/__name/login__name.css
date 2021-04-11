@@ -1,0 +1,9 @@
+.login__name{
+    background-color: black;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+}
+.login__name:active, .login__name:focus {
+    outline: none;
+}

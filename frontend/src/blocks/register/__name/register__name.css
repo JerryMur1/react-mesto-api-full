@@ -1,0 +1,9 @@
+.register__name{
+    background-color: black;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+}
+.register__name:active, .register__name:focus {
+    outline: none;
+}
