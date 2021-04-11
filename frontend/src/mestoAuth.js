@@ -1,5 +1,5 @@
 
-const BASE_URL = `${window.location.protocol}${process.env.REACT_APP_API_URL || '//localhost:3001'}`
+const BASE_URL = '//api.borman.nomoredomains.club'
 
 export const register = (email, password) =>{
     return fetch(`${BASE_URL}/signup`, {

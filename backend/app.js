@@ -21,34 +21,14 @@ const auth = require('./middlewares/auth');
 const options = {
   origin: [
     'http://localhost:3000',
-    'https://borman.nomoredomains.club',
+    'http://borman.nomoredomains.club/',
     'https://jerrymur1.github.io/react-mesto-api-full/',
   ],
   credentials: true,
 };
 
-// app.use('*', cors(options));
+app.use(cors());
 
-app.use((req, res, next) => {
-  const origins = [
-    'http://localhost:3000',
-    'https://borman.nomoredomains.club',
-    'https://jerrymur1.github.io/react-mesto-api-full/',
-  ];
-
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < origins.length; i++) {
-    const origin = origins[i];
-
-    if (req.headers.origin.indexOf(origin) > -1) {
-      res.header('Access-Control-Allow-Origin', req.headers.origin);
-    }
-  }
-
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 app.use(requestLogger);
 app.use(bodyParser.json());
 
