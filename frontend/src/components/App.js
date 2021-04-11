@@ -146,11 +146,12 @@ console.log(cards)
     selectedCard(null);
   }
 const tokenCheck = () =>{
+  
   const token = localStorage.getItem('token')
   if (token) {
     
     
-    mestoAuth.getContent(token)
+    mestoAuth.getContent('token')
     .then((res) =>{
       
       console.log(res)
