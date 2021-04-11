@@ -118,7 +118,7 @@ signup(body) {
 }
 
 const api = new Api({
-  baseUrl: "api.borman.nomoredomains.club/",
+  baseUrl: "https://api.borman.nomoredomains.club/",
  
 });
 

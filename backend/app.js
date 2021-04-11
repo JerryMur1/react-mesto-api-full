@@ -21,13 +21,13 @@ const auth = require('./middlewares/auth');
 const options = {
   origin: [
     'http://localhost:3000',
-    'http://borman.nomoredomains.club/',
+    'https://borman.nomoredomains.club/',
     'https://jerrymur1.github.io/react-mesto-api-full/',
   ],
   credentials: true,
 };
 
-app.use(cors());
+app.use('*', cors(options));
 
 app.use(requestLogger);
 app.use(bodyParser.json());
